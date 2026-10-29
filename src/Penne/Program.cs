@@ -1,6 +1,6 @@
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-IRepository repository = new PenneRepository();
+IRepository repository = new DatabaseRepository();
 ConsoleUI ui = new ConsoleUI();
 
 while (true)
