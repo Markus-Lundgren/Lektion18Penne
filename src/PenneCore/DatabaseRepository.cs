@@ -1,5 +1,5 @@
 using Microsoft.Data.Sqlite;
-class DatabaseRepository : IRepository
+public class DatabaseRepository : IRepository
 {
 	private List<Dish> _dishes = new List<Dish>();
 	private List<Order> _orders = new List<Order>();
@@ -23,7 +23,8 @@ class DatabaseRepository : IRepository
 				OrderNumber INTEGER,
 				Created DATE,
 				EatHere BOOL,
-				PaymentMethod TEXT
+				PaymentMethod TEXT,
+				Status TEXT NOT NULL CHECK(Status IN ('Inkommen', 'Tillagas', 'Utlämnad', 'Hämtad'))
 			);
 			CREATE TABLE IF NOT EXISTS OrderKeeper(
 				PenneOrderId INTEGER,
@@ -52,8 +53,8 @@ class DatabaseRepository : IRepository
 		using var insertCommand = _db.CreateCommand();
 
 		insertCommand.CommandText = """
-			INSERT INTO PenneOrder(OrderNumber, Created, EatHere, PaymentMethod)
-			VALUES($orderNumber, $created, $eatHere, $paymentMethod);
+			INSERT INTO PenneOrder(OrderNumber, Created, EatHere, PaymentMethod, Status)
+			VALUES($orderNumber, $created, $eatHere, $paymentMethod, 'Inkommen');
 		""";
 		order.OrderNumber = nextOrderNumber;
 		nextOrderNumber++;
@@ -86,7 +87,6 @@ class DatabaseRepository : IRepository
 		}
 		_orders.Add(order);
 	}
-
 	public List<Dish> GetAllDishes()
 	{
 		if (_dishes.Count > 0) return _dishes;
